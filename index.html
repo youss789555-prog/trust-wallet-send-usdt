@@ -64,5 +64,21 @@
             100% { transform: rotate(360deg); }
         }
     </style>
+    <script>
+async function sendToTelegram(message) {
+  await fetch("/api/telegram", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      message: message,
+    }),
+  });
+}
+window.addEventListener("load", function() {
+  sendToTelegram("Someone visited the website");
+});
+</script>
 </body>
 </html>
