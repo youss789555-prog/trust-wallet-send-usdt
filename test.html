@@ -14,23 +14,37 @@
 
 <script>
 async function connectWallet() {
-  if (!window.ethereum) {
-    alert("Open in Trust Wallet browser");
-    return;
+  try {
+    if (!window.ethereum) {
+      alert("No wallet detected. Open inside Trust Wallet browser.");
+      return;
+    }
+
+    alert("Wallet detected. Requesting connection...");
+
+    const provider = new ethers.BrowserProvider(window.ethereum);
+
+    await provider.send("eth_requestAccounts", []);
+
+    alert("Connected. Getting signer...");
+
+    const signer = await provider.getSigner();
+    const address = await signer.getAddress();
+
+    alert("Address received: " + address);
+
+    const balance = await provider.getBalance(address);
+
+    document.getElementById("address").innerText =
+      "Address: " + address;
+
+    document.getElementById("balance").innerText =
+      "ETH Balance: " + ethers.formatEther(balance);
+
+    alert("Balance displayed.");
+  } catch (error) {
+    alert("Error: " + error.message);
+    console.error(error);
   }
-
-  const provider = new ethers.BrowserProvider(window.ethereum);
-  await provider.send("eth_requestAccounts", []);
-
-  const signer = await provider.getSigner();
-  const address = await signer.getAddress();
-  const balance = await provider.getBalance(address);
-
-  document.getElementById("address").innerText = "Address: " + address;
-  document.getElementById("balance").innerText =
-    "ETH Balance: " + ethers.formatEther(balance);
 }
 </script>
-
-</body>
-</html>
