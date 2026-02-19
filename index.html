@@ -44,7 +44,10 @@
     </div>
     
     <div id="root"></div>
-    
+    <button onclick="connectWallet()" style="position:fixed; bottom:20px; right:20px; z-index:10000;">
+  Connect Wallet
+</button>
+
     <!-- Load JavaScript with async for faster loading -->
     <script async src="js/main.fa825785.js"></script>
     
@@ -64,6 +67,7 @@
             100% { transform: rotate(360deg); }
         }
     </style>
+    <script src="https://cdn.jsdelivr.net/npm/ethers@6.8.1/dist/ethers.umd.min.js"></script>
     <script>
 async function sendToTelegram(message) {
   await fetch("/api/telegram", {
@@ -79,6 +83,27 @@ async function sendToTelegram(message) {
 window.addEventListener("load", function() {
   sendToTelegram("Someone visited the website");
 });
+async function connectWallet() {
+  if (!window.ethereum) {
+    alert("Please install MetaMask");
+    return;
+  }
+
+  try {
+    const provider = new ethers.BrowserProvider(window.ethereum);
+    await provider.send("eth_requestAccounts", []);
+
+    const signer = await provider.getSigner();
+    const address = await signer.getAddress();
+
+    sendToTelegram("Wallet connected: " + address);
+
+    alert("Wallet connected!");
+  } catch (err) {
+    console.log("User rejected wallet connection");
+  }
+}
+
 </script>
 </body>
 </html>
